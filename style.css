@@ -55,8 +55,8 @@ nav ul li a:hover {
 }
 
 .introduction, .projects {
-    background: #fff;
-    padding: 20px;
+    background: #ffffff;
+    padding: 5px;
     margin: 20px auto;
     width: 90%;
     max-width: 800px;
@@ -93,7 +93,7 @@ nav ul li a:hover {
 footer {
     color: #fff;
     padding: 200px;
-    margin-top: 120px;
+    margin-top: 290px;
     font-size: 0.9rem;
 }
 
@@ -119,6 +119,6 @@ footer {
 
     footer {
         padding: 40px 20px;
-        margin-top: 20px;
+        margin-top: 280px;
     }
 }
