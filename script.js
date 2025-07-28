@@ -1,21 +1,39 @@
-var canvas = document.getElementById("canvas-club");
-var ctx = canvas.getContext("2d");
+const canvas = document.getElementById("canvas-club");
+const ctx = canvas.getContext("2d");
 
-var w = canvas.width = window.innerWidth;
-var h = canvas.height = window.innerHeight;
+let w = canvas.width = window.innerWidth;
+let h = canvas.height = window.innerHeight;
 
-var isMobile = /Mobi|Android/i.test(navigator.userAgent);
+const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+const max = isMobile ? 25 : 110;
+const drops = [];
 
-var max = isMobile ? 25 : 80;  // un peu moins que 110 pour fluidité PC
-var drops = [];
+const mouse = { x: null, y: null, radius: isMobile ? 70 : 120 };
 
-var mouse = { x: null, y: null, radius: isMobile ? 70 : 120 };
+// Deux thèmes : même paramètres, seule la couleur change
+const themes = [
+    {
+        name: "bleu",
+        textColor: (a) => `hsla(180, 80%, 60%, ${a})`,
+        strokeColor: (a) => `hsla(180, 100%, 20%, ${a})`,
+        glowColor: 'hsl(180, 100%, 60%)',
+        neon: true
+    },
+    {
+        name: "noir",
+        textColor: (a) => `rgba(200, 200, 200, ${a})`,
+        strokeColor: (a) => `rgba(100, 100, 100, ${a})`,
+        glowColor: null,
+        neon: false
+    }
+];
+let currentTheme = 0;
 
 if (!isMobile) {
-  window.addEventListener('mousemove', function(e) {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-  });
+    window.addEventListener('mousemove', function (e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
 }
 
 function random(min, max) {
@@ -25,43 +43,43 @@ function random(min, max) {
 function Drop() {
     this.x = random(0, w);
     this.y = random(-1000, 0);
-    this.speed = isMobile ? random(2, 3) : random(4, 5); // un peu moins rapide PC
+    this.speed = isMobile ? random(2, 3) : random(5, 6);
     this.value = Math.round(Math.random());
     this.size = isMobile ? 14 : 28;
     this.alpha = random(0.5, 1);
-    this.flicker = false; // on gère globalement
+    this.flicker = Math.random() < 0.1;
 }
 
-Drop.prototype.draw = function() {
+Drop.prototype.draw = function () {
+    const theme = themes[currentTheme];
     ctx.font = `${this.size}px monospace`;
-    ctx.fillStyle = `hsla(180, 80%, 60%, ${this.alpha})`;
+    ctx.fillStyle = theme.textColor(this.alpha);
 
-    if (!isMobile) {
-      ctx.shadowColor = 'hsl(180, 100%, 60%)';
-      ctx.shadowBlur = 4;  // réduit blur néon
+    if (theme.neon && !isMobile) {
+        ctx.shadowColor = theme.glowColor;
+        ctx.shadowBlur = 6;
     } else {
-      ctx.shadowBlur = 0;
+        ctx.shadowBlur = 0;
     }
 
     ctx.fillText(this.value, this.x, this.y);
-
-    ctx.strokeStyle = `hsla(180, 100%, 20%, ${this.alpha})`;
+    ctx.strokeStyle = theme.strokeColor(this.alpha);
     ctx.lineWidth = 1;
     ctx.strokeText(this.value, this.x, this.y);
 
-    if(this.flicker) {
-        ctx.fillStyle = `hsla(180, 100%, 80%, ${this.alpha})`;
+    if (this.flicker && Math.random() < 0.3 && theme.neon) {
+        ctx.fillStyle = theme.textColor(1.0);
         ctx.fillText(this.value, this.x, this.y);
     }
 };
 
-Drop.prototype.update = function() {
+Drop.prototype.update = function () {
     this.y += this.speed;
 
     if (mouse.x && mouse.y) {
-        var dx = this.x - mouse.x;
-        var dy = this.y - mouse.y;
-        var dist = Math.sqrt(dx*dx + dy*dy);
+        let dx = this.x - mouse.x;
+        let dy = this.y - mouse.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < mouse.radius) {
             this.x += dx > 0 ? 5 : -5;
@@ -89,15 +107,8 @@ function setup() {
     }
 }
 
-var lastTime = 0;
-var fpsInterval = isMobile ? 1000 / 30 : 1000 / 50; // 50 FPS PC pour plus de marge
-
-// Flicker global, toggle toutes les 100ms environ
-var flickerToggle = false;
-setInterval(() => {
-  flickerToggle = !flickerToggle;
-  drops.forEach(drop => drop.flicker = flickerToggle && Math.random() < 0.1);
-}, 100);
+let lastTime = 0;
+const fpsInterval = isMobile ? 1000 / 30 : 1000 / 60;
 
 function animate(time = 0) {
     if (time - lastTime > fpsInterval) {
@@ -117,6 +128,18 @@ function animate(time = 0) {
 window.addEventListener('resize', () => {
     w = canvas.width = window.innerWidth;
     h = canvas.height = window.innerHeight;
+});
+
+// Gestion du bouton toggle thème
+const toggle = document.querySelector('.toggle');
+
+toggle.addEventListener('click', () => {
+  // Inverse l'état aria-pressed
+  const isLight = toggle.getAttribute('aria-pressed') === 'true';
+  toggle.setAttribute('aria-pressed', !isLight);
+
+  // Change le thème en fonction du toggle
+  currentTheme = !isLight ? 1 : 0; // 1 = noir, 0 = bleu (adapter si besoin)
 });
 
 setup();
