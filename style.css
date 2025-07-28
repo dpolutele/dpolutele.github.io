@@ -7,7 +7,7 @@
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  pointer-events: none;
+  /*pointer-events: none;*/
 }
 
 body {
@@ -122,3 +122,4 @@ footer {
         margin-top: 280px;
     }
 }
+
