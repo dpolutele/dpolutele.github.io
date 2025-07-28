@@ -4,17 +4,19 @@ var ctx = canvas.getContext("2d");
 var w = canvas.width = window.innerWidth;
 var h = canvas.height = window.innerHeight;
 
-var max = 110; // un peu plus de gouttes pour densité
-var drops = [];
-
 var isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-var mouse = { x: null, y: null, radius: 120 };
+var max = isMobile ? 25 : 80;  // un peu moins que 110 pour fluidité PC
+var drops = [];
 
-window.addEventListener('mousemove', function(e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-});
+var mouse = { x: null, y: null, radius: isMobile ? 70 : 120 };
+
+if (!isMobile) {
+  window.addEventListener('mousemove', function(e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+  });
+}
 
 function random(min, max) {
     return Math.random() * (max - min) + min;
@@ -23,28 +25,31 @@ function random(min, max) {
 function Drop() {
     this.x = random(0, w);
     this.y = random(-1000, 0);
-    this.speed = random(5, 6);  // plus rapide
-    this.value = Math.round(Math.random()); // 0 ou 1
-    this.size = isMobile ? 20 : 28;
-    this.alpha = random(0.5, 1);  // transparence variable
-    this.flicker = Math.random() < 0.1; // 10% de chances de flicker (clignoter)
+    this.speed = isMobile ? random(2, 3) : random(4, 5); // un peu moins rapide PC
+    this.value = Math.round(Math.random());
+    this.size = isMobile ? 14 : 28;
+    this.alpha = random(0.5, 1);
+    this.flicker = false; // on gère globalement
 }
 
 Drop.prototype.draw = function() {
     ctx.font = `${this.size}px monospace`;
-    // couleur avec alpha et glow
     ctx.fillStyle = `hsla(180, 80%, 60%, ${this.alpha})`;
-    ctx.shadowColor = 'hsl(180, 100%, 60%)';
-    ctx.shadowBlur = 6;
+
+    if (!isMobile) {
+      ctx.shadowColor = 'hsl(180, 100%, 60%)';
+      ctx.shadowBlur = 4;  // réduit blur néon
+    } else {
+      ctx.shadowBlur = 0;
+    }
+
     ctx.fillText(this.value, this.x, this.y);
-    
-    // contour sombre fin
+
     ctx.strokeStyle = `hsla(180, 100%, 20%, ${this.alpha})`;
     ctx.lineWidth = 1;
     ctx.strokeText(this.value, this.x, this.y);
-    
-    // flicker aléatoire : on éclaire ou pas
-    if(this.flicker && Math.random() < 0.3) {
+
+    if(this.flicker) {
         ctx.fillStyle = `hsla(180, 100%, 80%, ${this.alpha})`;
         ctx.fillText(this.value, this.x, this.y);
     }
@@ -57,12 +62,12 @@ Drop.prototype.update = function() {
         var dx = this.x - mouse.x;
         var dy = this.y - mouse.y;
         var dist = Math.sqrt(dx*dx + dy*dy);
+
         if (dist < mouse.radius) {
-            this.x += dx > 0 ? 5 : -5;  // décalage plus marqué pour effet “repousse”
-            this.value = this.value === 0 ? 1 : 0;  // flip binaire au passage
-            this.alpha = 1;  // plus visible quand près de la souris
+            this.x += dx > 0 ? 5 : -5;
+            this.value = this.value === 0 ? 1 : 0;
+            this.alpha = 1;
         } else {
-            // alpha revient doucement vers une valeur aléatoire normale
             this.alpha += (random(0.5, 1) - this.alpha) * 0.05;
         }
     }
@@ -84,13 +89,28 @@ function setup() {
     }
 }
 
-function animate() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // fond opaque plus sombre pour meilleur contraste
-    ctx.fillRect(0, 0, w, h);
-    drops.forEach(drop => {
-        drop.draw();
-        drop.update();
-    });
+var lastTime = 0;
+var fpsInterval = isMobile ? 1000 / 30 : 1000 / 50; // 50 FPS PC pour plus de marge
+
+// Flicker global, toggle toutes les 100ms environ
+var flickerToggle = false;
+setInterval(() => {
+  flickerToggle = !flickerToggle;
+  drops.forEach(drop => drop.flicker = flickerToggle && Math.random() < 0.1);
+}, 100);
+
+function animate(time = 0) {
+    if (time - lastTime > fpsInterval) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, w, h);
+
+        drops.forEach(drop => {
+            drop.draw();
+            drop.update();
+        });
+
+        lastTime = time;
+    }
     requestAnimationFrame(animate);
 }
 
