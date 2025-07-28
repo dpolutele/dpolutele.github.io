@@ -4,7 +4,7 @@ var ctx = canvas.getContext("2d");
 var w = canvas.width = window.innerWidth;
 var h = canvas.height = window.innerHeight;
 
-var max = 70; // un peu plus de gouttes pour densité
+var max = 110; // un peu plus de gouttes pour densité
 var drops = [];
 
 var isMobile = /Mobi|Android/i.test(navigator.userAgent);
@@ -23,9 +23,9 @@ function random(min, max) {
 function Drop() {
     this.x = random(0, w);
     this.y = random(-1000, 0);
-    this.speed = random(2, 5);  // plus rapide
+    this.speed = random(5, 6);  // plus rapide
     this.value = Math.round(Math.random()); // 0 ou 1
-    this.size = isMobile ? 14 : 18;
+    this.size = isMobile ? 20 : 28;
     this.alpha = random(0.5, 1);  // transparence variable
     this.flicker = Math.random() < 0.1; // 10% de chances de flicker (clignoter)
 }
