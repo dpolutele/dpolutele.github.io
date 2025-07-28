@@ -22,38 +22,19 @@ O.prototype = {
         this.color = 'hsl(180, 100%, 50%)';
         this.w = 2;
         this.h = 1;
-        this.vy = isMobile ? random(2.5, 3.5) : random(4, 5);
+        // Ralentir la vitesse verticale sur mobile
+        this.vy = isMobile ? random(1, 2) : random(4, 5);
         this.vw = 3;
         this.vh = 1;
         this.size = isMobile ? 1.2 : 2;
-        this.hit = random(h * 0.8, h * 0.9);
+        this.hit = random(h * .8, h * .9);
         this.a = 1;
-        this.va = 0.96;
-        this.isSplashing = false;  // nouveau flag
+        this.va = .96;
     },
     draw: function() {
         if (this.y > this.hit) {
-            if (!isMobile) {
-                // Splash uniquement sur PC
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y - this.h / 2);
-                ctx.bezierCurveTo(
-                    this.x + this.w / 2, this.y - this.h / 2,
-                    this.x + this.w / 2, this.y + this.h / 2,
-                    this.x, this.y + this.h / 2
-                );
-                ctx.bezierCurveTo(
-                    this.x - this.w / 2, this.y + this.h / 2,
-                    this.x - this.w / 2, this.y - this.h / 2,
-                    this.x, this.y - this.h / 2
-                );
-                ctx.strokeStyle = 'hsla(180, 100%, 50%, ' + this.a + ')';
-                ctx.stroke();
-                ctx.closePath();
-            } else {
-                // Sur mobile, on dessine rien si la goutte est à l’impact
-                // Juste on ne dessine pas de splash
-            }
+            // Suppression de l'effet bulle
+            this.init();
         } else {
             ctx.fillStyle = this.color;
             ctx.fillRect(this.x, this.y, this.size, this.size * (isMobile ? 3 : 5));
@@ -63,29 +44,15 @@ O.prototype = {
         if (this.y < this.hit) {
             this.y += this.vy;
         } else {
-            if (!isMobile) {
-                // Splash animation uniquement PC
-                if (this.a > 0.03) {
-                    this.w += this.vw;
-                    this.h += this.vh;
-                    if (this.w > 100) {
-                        this.a *= this.va;
-                        this.vw *= 0.98;
-                        this.vh *= 0.98;
-                    }
-                } else {
-                    this.init();
-                }
-            } else {
-                // Sur mobile, réinitialiser directement à l’impact, pas de splash
-                this.init();
-            }
+            this.init();
         }
     }
 }
 
 function resize() {
-    // fix size volontaire
+    // Désactivé pour garder une taille fixe
+    // w = c.width = window.innerWidth;
+    // h = c.height = window.innerHeight;
 }
 
 function setup() {
@@ -95,8 +62,8 @@ function setup() {
                 var o = new O();
                 o.init();
                 drops.push(o);
-            }, j * 200);
-        })(i);
+            }, j * 200)
+        }(i));
     }
 }
 
