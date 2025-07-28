@@ -20,7 +20,7 @@ body {
 }
 
 header {
-    color: #fff;
+    color: #ffffffcc;
     padding: 20px;
 }
 
@@ -44,7 +44,7 @@ nav ul li {
 }
 
 nav ul li a {
-    color: #fff;
+    color: #ffffffcc;
     text-decoration: none;
     font-weight: 400;
     transition: color 0.3s;
@@ -55,7 +55,7 @@ nav ul li a:hover {
 }
 
 .introduction, .projects {
-    background: #ffffff;
+    background: #ffffffcc;
     padding: 5px;
     margin: 20px auto;
     width: 90%;
@@ -77,7 +77,7 @@ nav ul li a:hover {
 .projects ul li a {
     display: inline-block;
     background: #222;
-    color: #fff;
+    color: #ffffffcc;
     padding: 10px 20px;
     border-radius: 5px;
     text-decoration: none;
@@ -91,7 +91,7 @@ nav ul li a:hover {
 }
 
 footer {
-    color: #fff;
+    color: #ffffffcc;
     padding: 200px;
     margin-top: 290px;
     font-size: 0.9rem;
