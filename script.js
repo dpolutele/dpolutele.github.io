@@ -5,7 +5,7 @@ let w = canvas.width = window.innerWidth;
 let h = canvas.height = window.innerHeight;
 
 const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-const max = isMobile ? 25 : 110;
+const max = isMobile ? 35 : 100;
 const drops = [];
 
 const mouse = { x: null, y: null, radius: isMobile ? 70 : 120 };
@@ -43,7 +43,7 @@ function random(min, max) {
 function Drop() {
     this.x = random(0, w);
     this.y = random(-1000, 0);
-    this.speed = isMobile ? random(2, 3) : random(5, 6);
+    this.speed = isMobile ? random(3, 4) : random(6, 7);
     this.value = Math.round(Math.random());
     this.size = isMobile ? 14 : 28;
     this.alpha = random(0.5, 1);
