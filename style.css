@@ -7,7 +7,6 @@
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  /*pointer-events: none;*/
 }
 
 body {
@@ -55,7 +54,7 @@ nav ul li a:hover {
 }
 
 .introduction, .projects {
-    background: #ffffffcc;
+    background: #ffffffd8;
     padding: 5px;
     margin: 20px auto;
     width: 90%;
@@ -97,32 +96,6 @@ footer {
     font-size: 0.9rem;
 }
 
-/* Responsive mobile */
-@media (max-width: 600px) {
-    nav ul {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    h1 {
-        font-size: 1.8rem;
-    }
-
-    h2 {
-        font-size: 1.3rem;
-    }
-
-    .projects ul li a {
-        width: 100%;
-        max-width: 300px;
-    }
-
-    footer {
-        padding: 40px 20px;
-        margin-top: 280px;
-    }
-}
-
 /* Style du bouton toggle theme */
 .toggle {
   position: fixed;
@@ -159,4 +132,81 @@ footer {
 
 .toggle[aria-pressed="true"] .toggle__switch {
   transform: translateX(22px);
+}
+
+/* ✅ Responsive mobile amélioré */
+@media (max-width: 600px) {
+    body {
+        font-size: 16px;
+        padding: 0 10px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    header {
+        padding: 15px 5px;
+    }
+
+    .introduction, .projects {
+        width: 100%;
+        max-width: 95vw;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .projects ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .projects ul li {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .projects ul li a {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    footer {
+        padding: 40px 20px;
+        margin-top: 100px;
+        font-size: 0.8rem;
+    }
+
+    .toggle {
+        width: 48px;
+        height: 26px;
+    }
+
+    .toggle__switch {
+        width: 22px;
+        height: 22px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .toggle[aria-pressed="true"] .toggle__switch {
+        transform: translateX(20px);
+    }
 }
